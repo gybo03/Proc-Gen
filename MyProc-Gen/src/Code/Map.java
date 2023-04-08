@@ -29,24 +29,22 @@ public class Map {
     }
 
     private void startMap() {
-        int x = (int) (Math.random() * map.length);
-        int y = (int) (Math.random() * map[0].length);
-        //int x=0,y=0;
-        map[x][y].setState(TileType.GRAS);
+        for (int i = 0; i < 1; i++) {
+            int x = (int) (Math.random() * map.length);
+            int y = (int) (Math.random() * map[0].length);
+            //int x=0,y=0;
+            map[x][y].setState(TileType.GRAS);
+            map[x][y].generation = 2;
+            map[x][y].setProbability(presetMatrix[0]);
+            updateTile(x, y);
+            colorMatrix.setColor(x, y, Color.green);
+        }
+        /*int x=0,y=2;
+        map[x][y].setState(TileType.WATR);
         map[x][y].generation = 2;
-        map[x][y].setProbability(presetMatrix[0]);
+        map[x][y].setProbability(presetMatrix[2]);
         updateTile(x, y);
-        colorMatrix.setColor(x, y, Color.green);
-
-        int x1 = (int) (Math.random() * map.length);
-        int y1 = (int) (Math.random() * map[0].length);
-
-        //int x1=0,y1=2;
-        map[x1][y1].setState(TileType.WATR);
-        map[x1][y1].generation = 2;
-        map[x1][y1].setProbability(presetMatrix[0]);
-        updateTile(x1, y1);
-        colorMatrix.setColor(x1, y1, Color.blue);
+        colorMatrix.setColor(x, y, Color.blue);*/
     }
 
     public void updateMap() {
@@ -146,31 +144,31 @@ public class Map {
 
     private int[] getNeighbourProb(int i, int j) {
         int[] prob = new int[3];
-        for (int k = 0; k < prob.length; k++) {
-            prob[k] = 1;
-        }
+        boolean changed=false;
         if (i - 1 >= 0 && map[i - 1][j].getState() != TileType.NONE) {
-            sumProb(prob, i - 1, j);
+            changed=sumProb(prob, i - 1, j,changed);
         }
         if (i + 1 < map.length && map[i + 1][j].getState() != TileType.NONE) {
-            sumProb(prob, i + 1, j);
+            changed=sumProb(prob, i + 1, j,changed);
         }
         if (j - 1 >= 0 && map[i][j - 1].getState() != TileType.NONE) {
-            sumProb(prob, i, j - 1);
+            changed=sumProb(prob, i, j - 1,changed);
         }
         if (j + 1 < map[0].length && map[i][j + 1].getState() != TileType.NONE) {
-            sumProb(prob, i, j + 1);
+            changed=sumProb(prob, i, j + 1,changed);
         }
         return prob;
     }
 
-    private void sumProb(int[] prob, int i, int j) {
+    private boolean sumProb(int[] prob, int i, int j,boolean change) {
         for (int k = 0; k < prob.length; k++) {
-            if (map[i][j].getProbability()[k] == 0) {
+            if (map[i][j].getProbability()[k] == 0||(prob[k]==0&&change)) {
                 prob[k] *= map[i][j].getProbability()[k];
+            }else{
+                prob[k] += map[i][j].getProbability()[k];
             }
-            prob[k] += map[i][j].getProbability()[k];
         }
+        return true;
     }
 
     private int getNumberOfNeighbours(int i, int j) {

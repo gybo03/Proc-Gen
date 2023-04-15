@@ -25,11 +25,17 @@ public class ImageMatrixViewer extends JFrame {
         this.columns = columns;
         this.cellSize=cellSize;
         String[] imagePaths1 = {
+                "src/TestSprites/G.png", "src/TestSprites/W.png", "src/TestSprites/EC.png", "src/TestSprites/WC.png",
+                "src/TestSprites/SC.png", "src/TestSprites/NC.png", "src/TestSprites/NEC.png", "src/TestSprites/NWC.png",
+                "src/TestSprites/SEC.png", "src/TestSprites/SWC.png","src/TestSprites/INEC.png","src/TestSprites/INWC.png",
+                "src/TestSprites/ISEC.png", "src/TestSprites/ISWC.png","src/TestSprites/NONE.png","src/TestSprites/NONE.png"
+        };
+        /*String[] imagePaths1 = {
                 "src/Sprites/G.png", "src/Sprites/W.png", "src/Sprites/EC.png", "src/Sprites/WC.png",
                 "src/Sprites/SC.png", "src/Sprites/NC.png", "src/Sprites/NEC.png", "src/Sprites/NWC.png",
                 "src/Sprites/SEC.png", "src/Sprites/SWC.png","src/Sprites/INEC.png","src/Sprites/INWC.png",
                 "src/Sprites/ISEC.png", "src/Sprites/ISWC.png","src/Sprites/NONE.png","src/Sprites/NONE.png"
-        };
+        };*/
         imagePaths=imagePaths1;
         this.imageLabels = new JLabel[rows][columns];
 

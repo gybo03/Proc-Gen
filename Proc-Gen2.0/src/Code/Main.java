@@ -1,8 +1,10 @@
 package Code;
 
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-
+        int[][] tileM={{1,1,1,1,1,1},{1,12,5,5,13,1},{1,3,0,14,14,1},{1,3,8,14,14,5},{1,10,11,1,10,9},{1,1,1,1,1,3}};
         int[][][] preset = new int[14][4][4];
         //<editor-fold desc="Preset">
         int[][] G = {{0, 5, 6, 7}, {0, 4, 8, 9}, {0, 2, 6, 8}, {0, 3, 7, 9}};
@@ -39,17 +41,41 @@ public class Main {
         preset[TileType.iSOUTH_EAST_COAST.getValue()] = ISEC;
         preset[TileType.iSOUTH_WEST_COAST.getValue()] = ISWC;
         //</editor-fold>
-        int row=16,col=16;
-        Map map = new Map(preset, row, col, 48);
-        int prevEn=-1;
-        int nextEn=map.getEnthropy();
-        while(nextEn!=prevEn){
-            System.out.println(map.getEnthropy());
+        int row=256,col=256;
+        Map map = new Map(preset, row, col, 4);
+        //Map map1 = new Map(preset, row, col, 16);
+        //map.generateTileMap(tileM);
+        //map.setMap(m);
+        //Scanner sc=new Scanner(System.in);
+        //int n;
+        System.out.println("b");
+        do{
             map.updateMap();
-            prevEn=nextEn;
-            nextEn=map.getEnthropy();
+            //map1.updateMap();
+            //System.out.println(map.getEnthropy());
+            //System.out.println(map);
+            //n=sc.nextInt();
             Thread.sleep(100);
-        }
-        System.out.println("done");
+        }while(map.getEnthropy()>0);
+        /*for (int i = 0; i < 100; i++) {
+            Map map = new Map(preset, row, col, 128);
+            map.generateTileMap(tileM);
+            //map.setMap(m);
+            //Scanner sc=new Scanner(System.in);
+            //int n;
+            do{
+                map.updateMap();
+                //System.out.println(map.getEnthropy());
+                //System.out.println(map);
+                //n=sc.nextInt();
+                Thread.sleep(3000);
+            }while(map.getEnthropy()>0);
+            System.out.println("done");
+            Thread.sleep(500);
+            map.getImageMatrixViewer().dispose();
+        }*/
+
+        //map.updateMap();
+
     }
 }

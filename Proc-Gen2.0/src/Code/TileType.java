@@ -15,7 +15,9 @@ public enum TileType {
     iNORTH_WEST_COAST(11),
     iSOUTH_EAST_COAST(12),
     iSOUTH_WEST_COAST(13),
-    NONE(14);
+    FOREST(14),
+    NONE(15);
+
 
     private final int value;
 

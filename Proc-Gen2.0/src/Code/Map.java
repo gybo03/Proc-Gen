@@ -8,13 +8,19 @@ public class Map {
     private ImageMatrixViewer imageMatrixViewer;
 
     private Tile[][] map;
+
+    private int[] enabledTiles;
     private int row;
     private int col;
 
     private int enthropy;
 
-    public Map(int[][][] preset, int row, int col, int size) {
+    public Map(int[][][] preset, int[] enabledTiles, int row, int col, int size) {
         this.preset = preset;
+        this.enabledTiles = enabledTiles;
+        //printPreset();
+        calculatePreset();
+        //printPreset();
         this.row = row;
         this.col = col;
         enthropy = row * col;
@@ -41,6 +47,32 @@ public class Map {
         return stringBuilder.toString();
     }
 
+    private void printPreset() {
+        for (int i = 0; i < preset.length; i++) {
+            for (int j = 0; j < preset[0].length; j++) {
+                for (int k = 0; k < preset[0][0].length; k++) {
+                    System.out.printf("%3d", preset[i][j][k]);
+                }
+                System.out.println();
+            }
+            System.out.println();
+        }
+    }
+
+    private void calculatePreset() {
+        for (int i = 0; i < preset.length; i++) {
+            for (int j = 0; j < preset[0].length; j++) {
+                for (int k = 0; k < preset[0][0].length; k++) {
+                    for (int l = 0; l < preset.length; l++) {
+                        if (enabledTiles[l] == 0 && preset[i][j][k] == l) {
+                            preset[i][j][k] = TileType.NONE.getValue();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private void declareMap() {
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
@@ -63,12 +95,19 @@ public class Map {
     public void generateTileMap(int[][] tileM) {
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
-                if (tileM[i][j] != 14) {
+                if (tileM[i][j] != TileType.NONE.getValue()) {
                     enthropy--;
                 }
                 initTile(i, j, intToTileType(tileM[i][j]));
             }
         }
+    }
+
+    public boolean isTileEnabled(int i) {
+        if (enabledTiles[i] == 1) {
+            return true;
+        }
+        return false;
     }
 
     public ImageMatrixViewer getImageMatrixViewer() {
@@ -78,7 +117,13 @@ public class Map {
     private void startMap() {
         int x = (int) (Math.random() * map.length);
         int y = (int) (Math.random() * map[0].length);
-        initTile(0, 0, TileType.GRASS);
+        int z;
+        do {
+            z = (int) (Math.random() * enabledTiles.length);
+        } while (!isTileEnabled(z));
+        //initTile(0, 0, intToTileType(z));
+        initTile(x, y, intToTileType(z));
+        //initTile(0, 0, TileType.FOREST);
         enthropy--;
     }
 
@@ -136,7 +181,7 @@ public class Map {
 
     private void fillArray(int[][] preset, int x) {
         for (int i = 0; i < preset[0].length; i++) {
-            preset[x][i] = -1;
+            preset[x][i] = TileType.NONE.getValue();
         }
     }
 
@@ -152,7 +197,7 @@ public class Map {
 
     private void randomizeBucket(double[] bucket, double max) {
         for (int i = 0; i < bucket.length; i++) {
-            if (max <= bucket[i]) {
+            if (max == bucket[i]) {
                 bucket[i] *= Math.random();
             } else {
                 bucket[i] = 0;
@@ -161,10 +206,10 @@ public class Map {
     }
 
     private double[] calculateBucket(int[][] intersectionOfPresets) {
-        double[] bucket = new double[14];
+        double[] bucket = new double[TileType.values().length];
         for (int i = 0; i < intersectionOfPresets.length; i++) {
             for (int j = 0; j < intersectionOfPresets[0].length; j++) {
-                if (intersectionOfPresets[i][j] != -1 && intersectionOfPresets[i][j] < 14) {
+                if (intersectionOfPresets[i][j] != TileType.NONE.getValue()) {
                     bucket[intersectionOfPresets[i][j]]++;
                 }
             }
@@ -173,7 +218,7 @@ public class Map {
     }
 
     private int[][] calculateIntersectionPresets(int x, int y, boolean recursion) {
-        int[][] intersectionOfPresets = new int[4][4];
+        int[][] intersectionOfPresets = new int[preset[0].length][preset[0][0].length];
         if (x - 1 >= 0 && map[x - 1][y].getTileType() != TileType.NONE) {
             intersectionOfPresets[0] = preset[map[x - 1][y].getTileType().getValue()][1];
         } else if (x - 1 >= 0 && map[x - 1][y].getTileType() == TileType.NONE && recursion) {
@@ -214,13 +259,11 @@ public class Map {
 
     private void updateTile(int x, int y) {
         if (map[x][y].getTileType() == TileType.NONE && getNumOfNeighbours(x, y)[0] > 0 && getNumOfNeighbours(x, y)[1] > 1) {
-
             int[][] intersectionOfPresets = calculateIntersectionPresets(x, y, true);
             double[] bucket = calculateBucket(intersectionOfPresets);
             double max = findMax(bucket);
             randomizeBucket(bucket, max);
             max = findMax(bucket);
-
             for (int i = 0; i < bucket.length; i++) {
                 if (bucket[i] >= max) {
                     setTile(x, y, intToTileType(i));
